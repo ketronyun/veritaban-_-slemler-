@@ -36,6 +36,73 @@ namespace veritabanı
             }
         }
 
+        //========================================================================
+        //=========================  Fonksiyonlar  ===============================
+        //========================================================================
+
+        private void arama()
+        {
+            string aranan = textBox4.Text.Trim();
+
+            using (var conn = new MySqlConnection(connStr))
+            {
+                conn.Open();
+                string query = "SELECT ad, soyad, yas FROM isim WHERE ad LIKE @aranan";
+
+                using (var cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@aranan", aranan + "%"); // "al%" -> al ile başlayanlar
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        dataGridView1.Rows.Clear(); // eski satırları temizle
+
+                        while (reader.Read())
+                        {
+                            string ad = reader.GetString("ad");
+                            string soyad = reader.GetString("soyad");
+                            int yas = reader.GetInt32("yas");
+
+                            dataGridView1.Rows.Add(ad, soyad, yas);
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+        private void geriarama()
+        {
+            using (var conn = new MySqlConnection(connStr))
+            {
+                conn.Open();
+                string query = "SELECT ad, soyad, yas FROM isim";
+
+                using (var cmd = new MySqlCommand(query, conn))
+                {
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        dataGridView1.Rows.Clear(); // eski satırları temizle
+
+                        while (reader.Read())
+                        {
+                            string ad = reader.GetString("ad");
+                            string soyad = reader.GetString("soyad");
+                            int yas = reader.GetInt32("yas");
+
+                            dataGridView1.Rows.Add(ad, soyad, yas);
+                        }
+                    }
+                }
+            }
+        }
+
+        //========================================================================
+        //========================================================================
+        //========================================================================
+
         private void button1_Click(object sender, EventArgs e)
         {
             // textboxlardan değerleri al
@@ -76,6 +143,23 @@ namespace veritabanı
             textBox3.Clear();
         }
 
+        private void btnAra_Click(object sender, EventArgs e)
+        {
+            arama();
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox4.Text=="")
+            {
+                geriarama();
+            }
+
+            else
+            {
+                arama();
+            }
+        }
     }
 }
 
