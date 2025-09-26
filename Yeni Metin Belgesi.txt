@@ -1,0 +1,72 @@
+nugget paket yönetiminden MySql.Data yı indirip kuruyoruz(asp.net ile yapıyorsanız yüklenmez asp siz proje kurun)
+
+using MySql.Data.MySqlClient; yazmayı unutmayın en üste
+
+
+sonra ise veri tabanımıza bağlanmamız gerekmekte 
+ string connStr = "server=localhost;user=root;database=bagla;port=3306;password=12345678;";
+
+
+şimdi ise php my admine ekleme yapmamız lazım 
+
+CREATE TABLE isim (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ad VARCHAR(50) NOT NULL,
+    soyad VARCHAR(50) NOT NULL
+);
+ ile isim tablosu oluştururz 
+
+INSERT INTO isim (ad, soyad) VALUES ('Ahmet', 'Yılmaz');
+INSERT INTO isim (ad, soyad) VALUES ('Ayşe', 'Demir');
+ekleriz 
+
+CREATE TABLE IF NOT EXISTS isim (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ad VARCHAR(50) NOT NULL,
+    soyad VARCHAR(50) NOT NULL
+);
+
+tablo kontrolü yaparak ekletiyoruz 
+
+ALTER TABLE isim ADD COLUMN yas INT;
+ALTER TABLE isim ADD COLUMN sehir VARCHAR(50);
+
+
+ekleme yapıyoruz 
+
+INSERT INTO isim (ad, soyad, yas, sehir) 
+VALUES ('Mehmet', 'Kara', 30, 'İstanbul');
+
+
+
+ALTER TABLE isim DROP COLUMN sehir;
+burasıda sütun silmeye yarıyor 
+
+
+using (var conn = new MySqlConnection(connStr))
+{
+    conn.Open();
+    string query = "INSERT INTO isim (ad, soyad, yas) VALUES (@ad, @soyad, @yas)";
+
+    using (var cmd = new MySqlCommand(query, conn))
+    {
+        cmd.Parameters.AddWithValue("@ad", ad);
+        cmd.Parameters.AddWithValue("@soyad", soyad);
+        cmd.Parameters.AddWithValue("@yas", yas);
+
+        cmd.ExecuteNonQuery(); // veriyi ekler
+    }
+}
+
+bu ise eklemeye yarar
+
+using (var conn = new MySqlConnection(connStr))
+{
+    conn.Open();
+    string query = "INSERT INTO isim (ad, soyad, yas) VALUES (@ad, @soyad, @yas)";
+    using (var cmd = new MySqlCommand(query, conn))
+    {
+    }
+}
+
+şeklinde yapmak istediğimizi yapıyoruz 
